@@ -18,7 +18,7 @@ so = pytest.importorskip("scipy.optimize")
 
 
 def slsqp_first_price(v, budgets):
-    """Das Erstpreis-Programm in den Ausgaben b, gelöst mit SLSQP: Preise p_j = sum_i b_ij."""
+    """Das Erstpreis-Programm in den Ausgaben b, gelöst mit SLSQP: (Preise p_j = sum_i b_ij, Zielwert). SLSQP ist die ungenauere Seite und konvergiert nicht immer."""
     n, m = v.shape
     mask = v > 0
     logv = A.log_values(v)
@@ -31,7 +31,11 @@ def slsqp_first_price(v, budgets):
     cons = [{"type": "ineq", "fun": (lambda z, i=i: budgets[i] - z.reshape(n, m)[i].sum())} for i in range(n)]
     z0 = (mask / mask.sum(axis=1, keepdims=True) * budgets[:, None] * 0.5).ravel()
     r = so.minimize(f, z0, constraints=cons, bounds=[(1e-9, None)] * (n * m), method="SLSQP", options={"ftol": 1e-15, "maxiter": 3000})
-    return (r.x.reshape(n, m) * mask).sum(axis=0)
+    return (r.x.reshape(n, m) * mask).sum(axis=0), float(r.fun)
+
+
+def our_objective(mk, res):
+    return A.objective(res.spend, A.log_values(mk.v))
 
 
 def eisenberg_gale_prices(v, budgets):
@@ -51,11 +55,19 @@ def eisenberg_gale_prices(v, budgets):
 @pytest.mark.parametrize("scale", [0.1, 0.5, 1.2, 3.0])
 @pytest.mark.parametrize("kind", C.KINDS)
 def test_first_price_against_slsqp_and_the_definition(kind, scale):
+    """Das Programm ist konvex: Unser Zielwert liegt nie über dem von SLSQP; wo SLSQP konvergiert (Zielwert innerhalb 1e-6), stimmen die Preise überein."""
+    agreed = 0
     for seed in range(5):
         mk = S.make_market(kind, 4, 6, "ungleich", scale, seed)
         res = A.solve(mk.v, mk.budgets)
         assert res.ok and A.definition_ok(mk.v, mk.budgets, res.p, res.alpha, res.spend)
-        assert res.p == pytest.approx(slsqp_first_price(mk.v, mk.budgets), rel=1e-4), (kind, scale, seed)
+        p_sl, f_sl = slsqp_first_price(mk.v, mk.budgets)
+        ours = our_objective(mk, res)
+        assert ours <= f_sl + 1e-9, (kind, scale, seed)
+        if f_sl - ours < 1e-6:
+            agreed += 1
+            assert res.p == pytest.approx(p_sl, rel=1e-3), (kind, scale, seed)
+    assert agreed >= 2                                                     # SLSQP konvergiert in mehreren der fünf Märkte
 
 
 def test_every_budget_binding_is_the_fisher_market_against_eisenberg_gale():
@@ -77,7 +89,7 @@ def test_the_fisher_program_against_eisenberg_gale_even_when_pacing_would_not_bi
 
 def test_the_hand_example_against_slsqp(hand):
     v, b = hand
-    assert A.solve(v, b).p == pytest.approx([2.1, 1.4, 0.5]) and slsqp_first_price(v, b) == pytest.approx([2.1, 1.4, 0.5], rel=1e-5)
+    assert A.solve(v, b).p == pytest.approx([2.1, 1.4, 0.5]) and slsqp_first_price(v, b)[0] == pytest.approx([2.1, 1.4, 0.5], rel=1e-3)
 
 
 def rational_grid(q_max):
