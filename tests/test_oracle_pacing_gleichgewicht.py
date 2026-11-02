@@ -31,7 +31,9 @@ def slsqp_first_price(v, budgets):
     cons = [{"type": "ineq", "fun": (lambda z, i=i: budgets[i] - z.reshape(n, m)[i].sum())} for i in range(n)]
     z0 = (mask / mask.sum(axis=1, keepdims=True) * budgets[:, None] * 0.5).ravel()
     r = so.minimize(f, z0, constraints=cons, bounds=[(1e-9, None)] * (n * m), method="SLSQP", options={"ftol": 1e-15, "maxiter": 3000})
-    return (r.x.reshape(n, m) * mask).sum(axis=0), float(r.fun)
+    b = r.x.reshape(n, m) * mask
+    violation = float(np.max(np.maximum(b.sum(axis=1) - budgets, 0.0) / budgets))        # SLSQP hält die Nebenbedingungen nur näherungsweise ein
+    return b.sum(axis=0), float(r.fun), violation
 
 
 def our_objective(mk, res):
@@ -54,20 +56,31 @@ def eisenberg_gale_prices(v, budgets):
 
 @pytest.mark.parametrize("scale", [0.1, 0.5, 1.2, 3.0])
 @pytest.mark.parametrize("kind", C.KINDS)
-def test_first_price_against_slsqp_and_the_definition(kind, scale):
-    """Das Programm ist konvex: Unser Zielwert liegt nie über dem von SLSQP; wo SLSQP konvergiert (Zielwert innerhalb 1e-6), stimmen die Preise überein."""
-    agreed = 0
+def test_first_price_satisfies_the_definition_and_is_not_beaten_by_a_feasible_slsqp_point(kind, scale):
+    """Das Programm ist konvex: Ein zulässiger SLSQP-Punkt hat nie einen niedrigeren Zielwert als unsere Lösung (SLSQP verletzt die Budgets zuweilen um Spuren und liegt dann scheinbar darunter)."""
     for seed in range(5):
         mk = S.make_market(kind, 4, 6, "ungleich", scale, seed)
         res = A.solve(mk.v, mk.budgets)
         assert res.ok and A.definition_ok(mk.v, mk.budgets, res.p, res.alpha, res.spend)
-        p_sl, f_sl = slsqp_first_price(mk.v, mk.budgets)
-        ours = our_objective(mk, res)
-        assert ours <= f_sl + 1e-9, (kind, scale, seed)
-        if f_sl - ours < 1e-6:
-            agreed += 1
-            assert res.p == pytest.approx(p_sl, rel=1e-3), (kind, scale, seed)
-    assert agreed >= 2                                                     # SLSQP konvergiert in mehreren der fünf Märkte
+        _, f_sl, violation = slsqp_first_price(mk.v, mk.budgets)
+        if violation < 1e-9:
+            assert our_objective(mk, res) <= f_sl + 1e-9, (kind, scale, seed)
+
+
+def test_first_price_prices_agree_with_slsqp_where_slsqp_converged():
+    """Über 40 Märkte: wo SLSQP zulässig ist und den Zielwert fast erreicht (innerhalb 1e-6), stimmen die Preise überein; das gilt für mindestens die Hälfte der Märkte."""
+    agreed = total = 0
+    for kind in C.KINDS:
+        for scale in (0.1, 0.5, 1.2, 3.0):
+            for seed in range(5):
+                mk = S.make_market(kind, 4, 6, "ungleich", scale, seed)
+                res = A.solve(mk.v, mk.budgets)
+                p_sl, f_sl, violation = slsqp_first_price(mk.v, mk.budgets)
+                total += 1
+                if violation < 1e-9 and abs(f_sl - our_objective(mk, res)) < 1e-6:
+                    agreed += 1
+                    assert res.p == pytest.approx(p_sl, rel=1e-3), (kind, scale, seed)
+    assert total == 40 and agreed >= 20
 
 
 def test_every_budget_binding_is_the_fisher_market_against_eisenberg_gale():
