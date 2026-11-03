@@ -85,7 +85,7 @@ st.markdown(
     """
 Eine Frachtbörse versteigert **viele einzelne Suchanfragen**; Werbekunden haben je ein **Tagesbudget**. Damit es für den Tag reicht, **bremst** jeder Kunde alle seine Gebote mit **einem Faktor** $\\alpha_i \\le 1$ (**Pacing**):
 Er bietet $\\alpha_i$ mal seinen Wert und bremst nur so weit, dass das Budget gerade ausgeschöpft wird. Im **Erstpreis** (der Höchstbietende zahlt sein Gebot) ist das Gleichgewicht **eindeutig**, und es folgt aus demselben Programm wie der Fisher-Markt
-aus Stück 1: Binden alle Budgets, *ist* es der Fisher-Markt. Im **Zweitpreis** (der Höchstbietende zahlt das zweithöchste Gebot) gibt es immer ein Gleichgewicht, aber **mehrere sind möglich**, mit sehr verschiedenen Einnahmen.
+aus Stück 1: Binden alle Budgets, *ist* es der Fisher-Markt. Im **Zweitpreis** (der Höchstbietende zahlt das zweithöchste Gebot) fand die Demo in jedem Markt ein Gleichgewicht, aber **mehrere sind möglich**, mit verschiedenen Einnahmen (im Handbeispiel das 2,40-Fache, in Zufallsmärkten meist deutlich weniger).
 Drittes Stück der Reihe **Marktmechanismen**; alle Märkte sind synthetisch, es gibt keine Daten echter Kunden.
 
 Weiter unten: zwei Abschnitte **🔬 Experiment**, **🚧 Wo die Annahmen enden** und der Expander **📐 Mathematische Formulierung**.
@@ -163,7 +163,7 @@ st.plotly_chart(build_scale_curve(rows), width="stretch", key="scale_chart")
 kind_s, text_s = verdict_scale(rows)
 getattr(st, kind_s)(text_s)
 st.caption("Solange **jedes** Budget bindet (grau hinterlegt), ist das Gleichgewicht der Fisher-Markt aus Stück 1: Die **Zuteilung** ändert sich mit dem Maßstab nicht (die Wohlfahrt ist waagerecht), nur die Preise wachsen mit den Budgets. "
-           "Wo Budgets nicht mehr binden, gewinnen die Kunden mit dem höheren Wert, und Wohlfahrt und Einnahme steigen zum budgetfreien Wert.")
+           "Wo Budgets nicht mehr binden, gewinnen die Kunden mit dem höheren Wert, und Wohlfahrt und Einnahme steigen in dieser Kurve zum budgetfreien Wert.")
 with st.expander("Zahlen zur Kurve"):
     st.markdown("\n".join(["| Maßstab s | Einnahme | Wohlfahrt | bremsende Kunden | alle Budgets binden |", "|---|---|---|---|---|"] + scale_rows(rows)))
     st.caption("Einnahme und Wohlfahrt relativ zur Einnahme ohne Budgets (Summe der Höchstwerte).")
@@ -180,7 +180,7 @@ st.markdown("---")
 # --- Experiment 2: Erstpreis gegen Zweitpreis ------------------------------------------------------------------------------------------------------
 
 st.subheader("🔬 Experiment 2: Erstpreis gegen Zweitpreis – eindeutig oder nicht?")
-st.markdown("Im **Erstpreis** gibt es genau ein Gleichgewicht. Im **Zweitpreis** gibt es immer eines, aber unter Umständen mehrere mit sehr verschiedenen Einnahmen; für viele Kunden ist es sogar schwer zu finden (PPAD-vollständig, laut Literatur). "
+st.markdown("Im **Erstpreis** gibt es genau ein Gleichgewicht. Im **Zweitpreis** fand die Demo in jedem Markt eines, aber unter Umständen mehrere mit verschiedenen Einnahmen (im Handbeispiel das 2,40-Fache, in Zufallsmärkten meist deutlich weniger); für viele Kunden ist es sogar schwer zu finden (PPAD-vollständig, laut Literatur). "
             "Für **zwei Kunden** lässt es sich exakt aufzählen: Entweder bremst keiner, oder einer (dann an einem Gleichstandsposten), oder beide (mit oder ohne Gleichstandsposten).")
 sppe_mode = st.radio("Markt", C.SPPE_MODES, key="sppe_mode", format_func=lambda k: C.SPPE_LABEL[k], horizontal=True)
 level = 1.0

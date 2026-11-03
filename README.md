@@ -7,7 +7,7 @@ Drittes Stück der Methodenreihe **Marktmechanismen** in der „Konzepte“-Reih
 
 ## Warum dieses Problem
 
-Wer ein Tagesbudget über viele Auktionen strecken muss, kann nicht einfach seinen Wert bieten: Er würde das Geld vormittags verbrauchen. Die übliche Lösung ist ein einziger Faktor $\alpha_i \le 1$, mit dem alle Gebote multipliziert werden. Die Kernfrage der Demo: **Welche Faktoren stellen sich ein, ist das Ergebnis eindeutig, und was ändert der Wechsel von Erst- auf Zweitpreis?** Die Antwort verbindet die Reihe: Im Erstpreis ist das Gleichgewicht **eindeutig** und folgt aus demselben Programm wie der Fisher-Markt; im Zweitpreis gibt es immer eines, aber **unter Umständen mehrere** mit verschiedenen Einnahmen.
+Wer ein Tagesbudget über viele Auktionen strecken muss, kann nicht einfach seinen Wert bieten: Er würde das Geld vormittags verbrauchen. Die übliche Lösung ist ein einziger Faktor $\alpha_i \le 1$, mit dem alle Gebote multipliziert werden. Die Kernfrage der Demo: **Welche Faktoren stellen sich ein, ist das Ergebnis eindeutig, und was ändert der Wechsel von Erst- auf Zweitpreis?** Die Antwort verbindet die Reihe: Im Erstpreis ist das Gleichgewicht **eindeutig** und folgt aus demselben Programm wie der Fisher-Markt; im Zweitpreis fand die Demo in jedem gerechneten Markt mindestens eines (die Existenz selbst ist eine Literaturaussage), aber **unter Umständen mehrere** mit verschiedenen Einnahmen (im Handbeispiel das 2,40-Fache, in den Zufallsmärkten von Tabelle 4 im Median das 1,02-Fache).
 
 ## Modell
 
@@ -17,7 +17,7 @@ $n$ Kunden mit Budgets $B_i$, $m$ Anfragen (je einmal), Wert $v_{ij} \ge 0$ des 
 $$\min \sum_j p_j \log p_j - \sum_j p_j - \sum_{ij} b_{ij} \log v_{ij} \quad \text{unter} \quad \sum_j b_{ij} \le B_i,\ b \ge 0 .$$
 Das ist das Shmyrev-Programm des Fisher-Marktes (Stück 1) mit „Budget höchstens“ statt „genau“. **Binden alle Budgets, ist das Gleichgewicht genau der Fisher-Markt.** Laut Abstract entsprechen die Lösungen des Eisenberg–Gale-Programms für quasi-lineare Fisher-Märkte genau den Erstpreis-Pacing-Gleichgewichten.
 
-**Zweitpreis:** Das Gleichgewicht existiert, ist aber nicht eindeutig, und seine Berechnung ist für viele Kunden schwer (näherungsweise PPAD-vollständig laut Abstract). Die Demo rechnet **zwei Kunden exakt** durch Aufzählung der Fälle: beide ungebremst; einer gebremst (er füllt sein Budget an einem Gleichstandsposten); beide gebremst, mit einem Gleichstandsposten oder **ohne Gleichstand** (jeder Faktor folgt dann allein aus dem eigenen Budget). Ist ein Budget **genau gleich einer Summe von Geboten**, gibt es ein ganzes Kontinuum von Gleichgewichten; die Demo lehnt solche entarteten Märkte ab (bei Zufallsbudgets kommen sie nicht vor).
+**Zweitpreis:** Das Gleichgewicht existiert, ist aber nicht eindeutig, und seine Berechnung ist für viele Kunden schwer (näherungsweise PPAD-vollständig laut Abstract). Die Demo rechnet **zwei Kunden exakt** durch Aufzählung der Fälle: beide ungebremst; einer gebremst (er füllt sein Budget an einem Gleichstandsposten); beide gebremst, mit einem Gleichstandsposten oder **ohne Gleichstand** (jeder Faktor folgt dann allein aus dem eigenen Budget). Trifft das Budget des gebremsten Kunden **genau seine Ausgabe, die in einem Faktorintervall konstant ist** (etwa weil das Budget eine Summe von Geboten ist), gibt es ein ganzes Kontinuum von Gleichgewichten; die Demo versucht, solche entarteten Märkte zu erkennen, und lehnt sie ab (bei Zufallsbudgets kommen sie nicht vor).
 
 Die Märkte sind synthetisch (Zufallswerte aus festen Seeds); es gibt keine Daten echter Kunden oder Börsen.
 
@@ -60,7 +60,7 @@ Im dritten Beispiel bieten beide 2 (Kunde 1 bremst auf 0,5): Gleichstand, jeder 
 | 2,686 | 100,0 % | 100,0 % | 0 % | nein |
 | 4,000 | 100,0 % | 100,0 % | 0 % | nein |
 
-Solange **jedes** Budget bindet (die ersten acht Zeilen), ist die **Wohlfahrt konstant** (97,2 %): Die Zuteilung ist die des Fisher-Marktes und hängt nicht vom Maßstab ab, nur die Preise wachsen mit den Budgets; die Preise sind dort gleich dem Fisher-Gleichgewicht (Test: Abweichung unter 1e-7, zusätzlich gegen das Eisenberg–Gale-Programm in der Zuteilung). Wo Budgets nicht mehr binden, steigen Wohlfahrt und Einnahme zum budgetfreien Wert 100 %.
+Solange **jedes** Budget bindet (die ersten acht Zeilen), ist die **Wohlfahrt konstant** (97,2 %): Die Zuteilung ist die des Fisher-Marktes und hängt nicht vom Maßstab ab, nur die Preise wachsen mit den Budgets; die Preise sind dort gleich dem Fisher-Gleichgewicht (Test: Abweichung unter 1e-7, zusätzlich gegen das Eisenberg–Gale-Programm in der Zuteilung). Wo Budgets nicht mehr binden, steigen in diesem Markt Wohlfahrt und Einnahme bis zum budgetfreien Wert 100 % (für die Einnahme ist Monotonie im Budget laut Literatur eine Eigenschaft des Erstpreises, für die Wohlfahrt nicht allgemein gezeigt).
 
 **Einnahme im Budget.** Erhöht man in 100 Zufallsmärkten (2 bis 5 Kunden, 3 bis 8 Anfragen, Maßstab 0,1, 0,3 oder 1) das Budget eines Kunden um 25 %, sinkt die Einnahme in **0 von 100** Paaren (laut Abstract ist Monotonie eine Eigenschaft des Erstpreises).
 
@@ -84,14 +84,14 @@ Im ersten Zweitpreis-Gleichgewicht bremst nur Kunde 1 (auf 1/6) und teilt sich A
 | 1,0 | 100 | 0 | 0 | – | 0,634 | 0,634 |
 | 3,0 | 100 | 0 | 0 | – | 0,525 | 0,525 |
 
-Gleichgewichte existieren in jedem Markt, mehrere mit verschiedener Einnahme sind in Zufallsmärkten **selten** (0 bis 8 von 100) und kommen dort vor, wo die Budgets teils binden. Bei bindenden Budgets nehmen Zweit- und Erstpreis dasselbe ein (die Budgetsumme, Verhältnis 1,000), bei großen Budgets nimmt der Zweitpreis weniger ein (0,634 und 0,525 der Erstpreis-Einnahme). In **60 von 1 000** Märkten mit ganzzahligen Werten (Werte 1 bis 7, 2 Kunden, 3 Anfragen, Zufallsbudgets 0,5 bis 4,5; Seed 22; viele Gleichstände) gibt es mehrere Gleichgewichte mit verschiedener Einnahme (**6,0 %**).
+In jedem gerechneten Markt gab es mindestens ein Gleichgewicht, mehrere mit verschiedener Einnahme sind in Zufallsmärkten **selten** (0 bis 8 von 100) und kommen dort vor, wo die Budgets teils binden. Bei bindenden Budgets nehmen Zweit- und Erstpreis dasselbe ein (die Budgetsumme, Verhältnis 1,000), bei großen Budgets nimmt der Zweitpreis weniger ein (0,634 und 0,525 der Erstpreis-Einnahme). In **60 von 1 000** Märkten mit ganzzahligen Werten (Werte 1 bis 7, 2 Kunden, 3 Anfragen, Zufallsbudgets 0,5 bis 4,5; Seed 22; viele Gleichstände) gibt es mehrere Gleichgewichte mit verschiedener Einnahme (**6,0 %**).
 
 ## Ehrliche Grenzen
 
 - **Multiplikatives Pacing mit einem Faktor je Kunde:** Echte Systeme steuern Gebote anders (Budgetglättung über die Zeit, Gebotsobergrenzen, Zielrenditen). Das Gleichgewicht ist der Endzustand, nicht der Weg dorthin; Dynamiken sind nicht gerechnet.
 - **Budget als harte Grenze, bekannte Werte, eine Anfrage je Auktion** (keine Plätze, kein GSP mit Budgets).
 - **Zweitpreis nur für zwei Kunden**, per Aufzählung; für mehr Kunden ist das Gleichgewicht laut Literatur schwer zu berechnen (PPAD).
-- **Entartete Märkte** (ein Budget gleich einer Summe von Geboten) haben ein Kontinuum von Zweitpreis-Gleichgewichten; die Demo lehnt sie ab. Ein erstes Handbeispiel dieser Art (Budget 1 gleich dem Wert 1 von Kunde 2 für Anfrage 3) wurde beim Bau durch die Orakelprüfung als Kontinuum erkannt und ersetzt.
+- **Entartete Märkte** (das Budget des gebremsten Kunden trifft genau seine im Faktorintervall konstante Ausgabe) haben ein Kontinuum von Zweitpreis-Gleichgewichten; die Demo versucht, sie zu erkennen, und lehnt sie ab. Ein erstes Handbeispiel dieser Art (Budget 1 gleich dem Wert 1 von Kunde 2 für Anfrage 3) wurde beim Bau durch die Orakelprüfung als Kontinuum erkannt und ersetzt.
 - **Die Häufigkeit mehrerer Gleichgewichte hängt von Erzeuger und Budgetstufe ab** (0 bis 8 % in Zufallsmärkten, 6 % bei ganzzahligen Werten); die Spanne der Einnahmen im Handbeispiel (2,40) ist ein ausgesuchtes Beispiel, kein Durchschnitt.
 - **Das Programm ist eine eigene Herleitung** der Form aus den Bedingungen, gedeckt durch Definition und SLSQP, nicht Zeile für Zeile mit der Quelle verglichen.
 - **Keine Anreizanalyse:** Ob ein Kunde durch falsche Angaben seines Werts gewinnt, wird nicht gerechnet.
@@ -100,7 +100,7 @@ Gleichgewichte existieren in jedem Markt, mehrere mit verschiedener Einnahme sin
 ## Verifikation
 
 - **Kern:** Handbeispiele von Hand (ein Kunde, Gleichstand, drei Gleichgewichte); Projektion auf die Budgetmenge; Definitionsprüfer fängt Verstöße ab (alle Gebote voll trotz Budget, falsche Preise, Bremsen ohne ausgeschöpftes Budget).
-- **Orakel (anderer Rechenweg):** das Erstpreis-Programm mit **SLSQP**; die **Definition** als eigene Prüffunktion; das **Eisenberg–Gale-Programm** des Fisher-Marktes in der Zuteilung (SLSQP) bei lauter bindenden Budgets; die Zweitpreis-Aufzählung gegen eine **Rastersuche über alle rationalen Faktorenpaare** mit reiner Intervallprüfung der Gleichstandsaufteilung (kleine Märkte mit Budgets mit halben Zahlen; die Aufzählung ist darin vollständig und korrekt). Diese Rastersuche hat beim Bau eine Lücke der ersten Aufzählung gefunden (beide Kunden gebremst ohne Gleichstand), die behoben wurde.
+- **Orakel (anderer Rechenweg):** das Erstpreis-Programm mit **SLSQP**; die **Definition** als eigene Prüffunktion; das **Eisenberg–Gale-Programm** des Fisher-Marktes in der Zuteilung (SLSQP) bei lauter bindenden Budgets; die Zweitpreis-Aufzählung gegen eine **Rastersuche über alle rationalen Faktorenpaare** mit reiner Intervallprüfung der Gleichstandsaufteilung (kleine Märkte mit Budgets mit halben Zahlen; die Aufzählung ist darin vollständig und korrekt, für nicht entartete Märkte). Diese Rastersuche hat beim Bau eine Lücke der ersten Aufzählung gefunden (beide Kunden gebremst ohne Gleichstand), die behoben wurde.
 - **Eigenschaftstests:** Definition in jedem Markt, Preis = höchstes Gebot, Eindeutigkeit von zufälligen Startpunkten, Einnahme monoton im Budget und begrenzt durch Budgetsumme und Höchstwerte, Skalierung, Umbenennen, maßstabsunabhängige Zuteilung bei bindenden Budgets, Fisher-Gleichheit, Existenz im Zweitpreis.
 - **Randfälle:** kleinste und größte Märkte, Maßstabsgrenzen, gleiche Kunden, winziges Budget, Budget gleich dem freien Preis, entartete Märkte, Laufzeit.
 - **Verdikte** als reine Funktionen an handgesetzten Werten; **Presets, Layout, AppTest-Rauchtest** (jeder Button, jeder Regler an Minimum und Maximum), **Footer**, **Laufzeit-Importe**.
