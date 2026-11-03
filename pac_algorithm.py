@@ -243,7 +243,8 @@ def sppe_two(v: np.ndarray, budgets: np.ndarray, tol: float = 1e-9) -> list[tupl
             continue
         if all(a * v1[j] > b * v2[j] * (1 + tol) for j in s1_set) and all(a * v1[j] < b * v2[j] * (1 - tol) for j in s2_set):
             out.append((a, b, B1, B2))
-    # Entartung: Zwischen zwei Gleichstandsverhältnissen ist die Ausgabe des Kunden mit Faktor 1 gegenüber dem anderen konstant; trifft sie das Budget genau, gibt es ein Kontinuum
+    # Entartung: Zwischen zwei Gleichstandsverhältnissen ist die Ausgabe des Kunden mit Faktor 1 gegenüber dem anderen konstant; trifft sie das Budget genau, gibt es ein Kontinuum,
+    # sofern die Ausgabe des anderen Kunden (proportional zum Faktor) für einen Teil des Intervalls leistbar ist: geprüft wird das Teilintervall (lo, min(hi, B / Steigung)], nicht der Mittelpunkt
     for ratios, solo_is_one in ((sorted({v2[j] / v1[j] for j in range(m) if v1[j] > 0 and v2[j] / v1[j] < 1.0}), True), (sorted({v1[j] / v2[j] for j in range(m) if v2[j] > 0 and v1[j] / v2[j] < 1.0}), False)):
         edges = [0.0] + ratios + [1.0]
         for lo, hi in zip(edges[:-1], edges[1:]):
@@ -251,10 +252,14 @@ def sppe_two(v: np.ndarray, budgets: np.ndarray, tol: float = 1e-9) -> list[tupl
                 continue
             mid = 0.5 * (lo + hi)
             s1, s2, _ = _spends(v, mid, 1.0) if solo_is_one else _spends(v, 1.0, mid)
-            if solo_is_one and abs(s1 - B1) < tol * max(B1, 1.0) and s2 <= B2 + 1e-9:
-                raise DegenerateMarket("Budget 1 ist genau eine Summe von Geboten von Kunde 2")
-            if not solo_is_one and abs(s2 - B2) < tol * max(B2, 1.0) and s1 <= B1 + 1e-9:
-                raise DegenerateMarket("Budget 2 ist genau eine Summe von Geboten von Kunde 1")
+            solo, other = (s1, s2) if solo_is_one else (s2, s1)
+            B_solo, B_other = (B1, B2) if solo_is_one else (B2, B1)
+            if abs(solo - B_solo) >= tol * max(B_solo, 1.0):
+                continue
+            slope = other / mid                                      # Ausgabe des anderen Kunden = Steigung * Faktor im ganzen Intervall
+            top = hi if slope <= 0 else min(hi, B_other / slope)
+            if top - lo > 1e-9:
+                raise DegenerateMarket("Budget 1 ist genau eine Summe von Geboten von Kunde 2" if solo_is_one else "Budget 2 ist genau eine Summe von Geboten von Kunde 1")
     uniq: list = []
     for e in out:
         if not any(abs(e[0] - u[0]) < 1e-9 and abs(e[1] - u[1]) < 1e-9 for u in uniq):

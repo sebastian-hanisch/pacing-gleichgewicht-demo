@@ -92,3 +92,20 @@ def test_the_hand_market_and_the_tie_market_are_what_the_texts_say():
     assert S.sppe_market("hand", 1, 1.0).v.tolist() == h.v.tolist()
     z = S.sppe_market("zufall", 4, 0.3)
     assert z.v.shape == (2, C.SPPE_M) and np.array_equal(z.v, S.sppe_market("zufall", 4, 0.3).v) and not np.array_equal(z.v, S.sppe_market("zufall", 5, 0.3).v)
+
+
+def test_a_continuum_is_found_although_the_other_buyer_is_unaffordable_at_the_interval_midpoint():
+    # Kunde 1 bremst mit a in (1/2, 1): Ausgabe 1 ist konstant 1 = B1, Ausgabe 2 ist a und liegt für a <= 0,6 im Budget 2 (am Mittelpunkt 0,75 nicht)
+    v, b = np.array([[2.0, 1.0], [1.0, 4.0]]), np.array([1.0, 0.6])
+    with pytest.raises(A.DegenerateMarket):
+        A.sppe_two(v, b)
+    assert all(A.sppe_feasible(v, b, a, 1.0) for a in (0.51, 0.55, 0.6)) and not A.sppe_feasible(v, b, 0.61, 1.0)
+    # gleicher Markt mit vertauschten Kunden: Kunde 2 bremst mit b in (1/2, 0,6]
+    with pytest.raises(A.DegenerateMarket):
+        A.sppe_two(v[::-1].copy(), b[::-1].copy())
+    # unteres Intervall (1/4, 1): Ausgabe 1 = 1 (Anfrage 1), Ausgabe 2 = a (Anfrage 2); Budget 2 = 0,3 gilt für a in (1/4, 0,3]
+    v3 = np.array([[4.0, 1.0], [1.0, 2.0]])
+    with pytest.raises(A.DegenerateMarket):
+        A.sppe_two(v3, np.array([1.0, 0.3]))
+    # Budget 2 = 1/4: nur der Randpunkt a = 1/4 (Gleichstand an Anfrage 1), kein Kontinuum
+    assert A.sppe_two(v3, np.array([1.0, 0.25]))
