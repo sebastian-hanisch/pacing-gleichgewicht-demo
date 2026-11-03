@@ -1,7 +1,6 @@
 # Pacing-Gleichgewicht: Auktionen mit Budgets – Streamlit-Demo
 
-<!-- TODO nach dem Deploy: direkt hierher den Live-Link setzen (Leerzeile davor und danach):
-**[→ Demo live ausprobieren](https://sebastianhanisch-pacing-gleichgewicht-demo.streamlit.app/)** -->
+**[→ Demo live ausprobieren](https://sebastianhanisch-pacing-gleichgewicht-demo.streamlit.app/)**
 
 Drittes Stück der Methodenreihe **Marktmechanismen** in der „Konzepte“-Reihe für die Website „Sebastian Hanisch – Operations Research und Machine Learning“. Ein Mechanismus macht aus Geboten, Budgets oder Überzeugungen Preise und eine Zuteilung; die Reihe prüft ihn an Effizienz, Anreizen, Budgetausgleich und Erlös und rechnet ihn als Programm. Das Stück führt die beiden Vorgänger zusammen: den [Fisher-Markt](https://github.com/sebastian-hanisch/fisher-markt-demo) (Preise aus Budgets) und die [Positionsauktion](https://github.com/sebastian-hanisch/positionsauktion-demo) (Gebote und Zahlungsregeln). Vehikel: **Werbekunden einer Frachtbörse mit Tagesbudget, viele einzelne Suchanfragen.** Damit das Budget für den Tag reicht, **bremst** jeder Kunde alle seine Gebote mit einem Faktor (**Pacing**).
 
@@ -158,4 +157,4 @@ Gebaut mit Streamlit, Plotly und NumPy.
 
 ---
 
-Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zu den Demos: [Interaktive Demos](https://sebastianhanisch.net/demos.html).
+Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zur Reihe: [Marktmechanismen: von Preisen bis Marktmachern](https://sebastianhanisch.net/konzepte-marktmechanismen.html).
